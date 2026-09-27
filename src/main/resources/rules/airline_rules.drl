@@ -1,0 +1,109 @@
+package rules.airline
+
+import com.udea.lab2aerolinea.model.Passenger
+import com.udea.lab2aerolinea.model.Flight
+import com.udea.lab2aerolinea.model.Luggage
+import com.udea.lab2aerolinea.model.Seat
+
+// 1. Ascenso a clase ejecutiva por retraso, para viajeros frecuentes Gold/Platinum
+rule "UpgradeToBusinessClassForFrequentFlyersWithDelays"
+    when
+        $p : Passenger(membershipLevel == "Gold" || membershipLevel == "Platinum",
+                       eligibleForUpgrade == true)
+        $f : Flight(passengerName == $p.name, delayMinutes > 60)
+    then
+        $p.setUpgradedToBusiness(true);
+        update($p);
+end
+
+// 2. Check-in prioritario para mayores de 65 años
+rule "PriorityCheckInForSeniors"
+    when
+        $p : Passenger(age > 65)
+    then
+        $p.setPriorityCheckIn(true);
+        update($p);
+end
+
+// 3. Descuento del 10% si el equipaje pesa menos de 10 kg
+rule "DiscountForLightLuggage"
+    when
+        $l : Luggage(weightKg < 10)
+        $p : Passenger(name == $l.passengerName)
+    then
+        $p.setDiscountPercentage(10.0);
+        update($p);
+end
+
+// 4. No elegible para ascensos si el equipaje pesa más de 23 kg
+rule "DenyUpgradeForOverweightLuggage"
+    salience 100
+    when
+        $l : Luggage(weightKg > 23)
+        $p : Passenger(name == $l.passengerName)
+    then
+        $p.setEligibleForUpgrade(false);
+        update($p);
+end
+
+// 5. Asignar asiento de salida de emergencia a adultos jóvenes (18-40) sin preferencia
+rule "AssignEmergencyExitSeatToYoungAdults"
+    when
+        $p : Passenger(age >= 18, age <= 40, seatPreference == "Any")
+        $s : Seat(type == "EmergencyExit", available == true)
+    then
+        $p.setAssignedSeat("EmergencyExit");
+        $s.setAvailable(false);
+        $s.setOccupied(true);
+        update($p);
+        update($s);
+end
+
+// 6. Compensación de $200 por retrasos mayores a 180 minutos
+rule "CompensationForExtremeDelays"
+    when
+        $f : Flight(delayMinutes > 180)
+        $p : Passenger(name == $f.passengerName)
+    then
+        $p.setCompensationAmount(200.0);
+        update($p);
+end
+
+// 7. 500 puntos de lealtad extra en vuelos largos (>5h) para no-Basic
+rule "ExtraLoyaltyPointsForLongFlights"
+    when
+        $p : Passenger(membershipLevel != "Basic")
+        $f : Flight(passengerName == $p.name, durationHours > 5)
+    then
+        $p.setLoyaltyPoints($p.getLoyaltyPoints() + 500);
+        update($p);
+end
+
+// 8. Restringir equipaje mayor a 15 kg en vuelos cortos (<2h)
+rule "DisallowHeavyLuggageOnShortFlights"
+    salience 100
+    when
+        $l : Luggage(weightKg > 15)
+        $f : Flight(passengerName == $l.passengerName, durationHours < 2)
+    then
+        $l.setAllowed(false);
+        update($l);
+end
+
+// 9. Acceso al salón VIP para miembros Platinum
+rule "VipLoungeAccessForPlatinumMembers"
+    when
+        $p : Passenger(membershipLevel == "Platinum")
+    then
+        $p.setVipLoungeAccess(true);
+        update($p);
+end
+
+// 10. Asiento preferencial para familias con niños y sin preferencia específica
+rule "PreferentialSeatForFamilies"
+    when
+        $p : Passenger(travelingWithChildren == true, seatPreference == "None")
+    then
+        $p.setPreferentialFamilySeat(true);
+        update($p);
+end

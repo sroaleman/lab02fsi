@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.udea.lab2aerolinea.Lab2aerolineaApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.454 s -- in com.udea.lab2aerolinea.Lab2aerolineaApplicationTests
