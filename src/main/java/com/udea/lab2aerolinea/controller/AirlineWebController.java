@@ -1,6 +1,7 @@
 package com.udea.lab2aerolinea.controller;
 
 import com.udea.lab2aerolinea.model.AirlineRequest;
+import com.udea.lab2aerolinea.model.AirlineResponse;
 import com.udea.lab2aerolinea.model.Flight;
 import com.udea.lab2aerolinea.model.Luggage;
 import com.udea.lab2aerolinea.model.Passenger;
@@ -36,8 +37,9 @@ public class AirlineWebController {
         if (result.hasErrors()) {
             return "airline_form";
         }
-        Passenger resultado = evaluationService.evaluate(airlineRequest);
-        model.addAttribute("passenger", resultado);
+        AirlineResponse resultado = evaluationService.evaluate(airlineRequest);
+        model.addAttribute("passenger", resultado.getPassenger());
+        model.addAttribute("luggage", resultado.getLuggage());
         return "airline_result";
     }
 }

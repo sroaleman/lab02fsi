@@ -1,7 +1,7 @@
 package com.udea.lab2aerolinea.controller;
 
 import com.udea.lab2aerolinea.model.AirlineRequest;
-import com.udea.lab2aerolinea.model.Passenger;
+import com.udea.lab2aerolinea.model.AirlineResponse;
 import com.udea.lab2aerolinea.service.AirlineEvaluationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class AirlineController {
                     .orElse("Errores de validación");
             return "Error de validación: " + errorMessage;
         }
-        Passenger resultado = evaluationService.evaluate(request);
+        AirlineResponse resultado = evaluationService.evaluate(request);
         return resultado;
     }
 }

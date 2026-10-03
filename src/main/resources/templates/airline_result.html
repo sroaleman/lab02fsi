@@ -57,6 +57,10 @@
             <td>Asiento preferencial familiar</td>
             <td><span th:class="${passenger.preferentialFamilySeat} ? 'yes' : 'no'" th:text="${passenger.preferentialFamilySeat} ? 'Sí' : 'No'"></span></td>
         </tr>
+        <tr>
+            <td>Equipaje permitido</td>
+            <td><span th:class="${luggage.allowed} ? 'yes' : 'no'" th:text="${luggage.allowed} ? 'Sí' : 'No'"></span></td>
+        </tr>
     </table>
 
     <a th:href="@{/airline/form}">Volver a evaluar</a>

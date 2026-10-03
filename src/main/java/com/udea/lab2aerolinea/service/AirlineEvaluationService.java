@@ -1,7 +1,7 @@
 package com.udea.lab2aerolinea.service;
 
 import com.udea.lab2aerolinea.model.AirlineRequest;
-import com.udea.lab2aerolinea.model.Passenger;
+import com.udea.lab2aerolinea.model.AirlineResponse;
 import com.udea.lab2aerolinea.model.Seat;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -14,7 +14,7 @@ public class AirlineEvaluationService {
     @Autowired
     private KieContainer kieContainer;
 
-    public Passenger evaluate(AirlineRequest request) {
+    public AirlineResponse evaluate(AirlineRequest request) {
         KieSession kieSession = kieContainer.newKieSession();
         try {
             // Vincula el nombre del pasajero al vuelo y al equipaje para que los joins de las reglas funcionen
@@ -36,6 +36,6 @@ public class AirlineEvaluationService {
         } finally {
             kieSession.dispose();
         }
-        return request.getPassenger();
+        return new AirlineResponse(request.getPassenger(), request.getLuggage());
     }
 }
